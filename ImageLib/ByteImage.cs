@@ -8,14 +8,14 @@ using System.Drawing.Imaging;
 namespace ImageLib
 {
 
-    struct ByteColor
+    public struct ByteColor
     {
         public byte R;
         public byte G;
         public byte B;
     }
 
-    class ByteImage
+    public class ByteImage
     {
         public ByteColor[,] byteImage;
         public int Height;
@@ -49,13 +49,13 @@ namespace ImageLib
             BitmapData bdInputImage = bitmapImage.LockBits(new Rectangle(0, 0, bitmapImage.Width, bitmapImage.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             byte PixelSize = 3; // Red Green Blue
 
-            // set dimensi array segmen sesuai dengan dimensi gambar
+            // set array segment 
             ByteImage byImage = new ByteImage(bitmapImage.Width, bitmapImage.Height);
 
             unsafe
             {
                 byte* pInputImage = (byte*)(void*)bdInputImage.Scan0;
-                // kelebihan set, lihat http://www.codersource.net/csharp_image_Processing.aspx
+                // details explanation about stride image, http://www.codersource.net/csharp_image_Processing.aspx
                 int nOffset = bdInputImage.Stride - bdInputImage.Width * PixelSize;
 
                 for (int y = 0; y < bdInputImage.Height; y++)
@@ -77,14 +77,13 @@ namespace ImageLib
 
         public static Bitmap convertByteImageToBitmap(ByteImage byImage)
         {
-            Bitmap skinHairSegment = new Bitmap(byImage.Width, byImage.Height);
-            BitmapData bdImgSegment = skinHairSegment.LockBits(new Rectangle(0, 0, skinHairSegment.Width, skinHairSegment.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            Bitmap bitmapImage = new Bitmap(byImage.Width, byImage.Height);
+            BitmapData bdImgSegment = bitmapImage.LockBits(new Rectangle(0, 0, bitmapImage.Width, bitmapImage.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             byte PixelSize = 3; // Red Green Blue
 
             unsafe
             {
                 byte* pImgSegmented = (byte*)(void*)bdImgSegment.Scan0;
-                // kelebihan set, lihat http://www.codersource.net/csharp_image_Processing.aspx
                 int nOffset = bdImgSegment.Stride - bdImgSegment.Width * PixelSize;
 
                 for (int y = 0; y < bdImgSegment.Height; y++)
@@ -100,8 +99,8 @@ namespace ImageLib
                 }
             }
 
-            skinHairSegment.UnlockBits(bdImgSegment);
-            return skinHairSegment;
+            bitmapImage.UnlockBits(bdImgSegment);
+            return bitmapImage;
         }
 
         public static ByteImage copyValue(ByteImage input)
