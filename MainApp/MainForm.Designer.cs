@@ -36,6 +36,7 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnToGrayScale = new System.Windows.Forms.Button();
             this.btnResetImage = new System.Windows.Forms.Button();
+            this.btnBW = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbImage)).BeginInit();
             this.groupBoxImageLoad.SuspendLayout();
@@ -85,6 +86,7 @@
             // 
             this.flowLayoutPanel1.Controls.Add(this.btnLoadImage);
             this.flowLayoutPanel1.Controls.Add(this.btnToGrayScale);
+            this.flowLayoutPanel1.Controls.Add(this.btnBW);
             this.flowLayoutPanel1.Controls.Add(this.btnResetImage);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(275, 0);
@@ -104,13 +106,23 @@
             // 
             // btnResetImage
             // 
-            this.btnResetImage.Location = new System.Drawing.Point(3, 61);
+            this.btnResetImage.Location = new System.Drawing.Point(3, 90);
             this.btnResetImage.Name = "btnResetImage";
             this.btnResetImage.Size = new System.Drawing.Size(88, 23);
             this.btnResetImage.TabIndex = 3;
             this.btnResetImage.Text = "Reset";
             this.btnResetImage.UseVisualStyleBackColor = true;
             this.btnResetImage.Click += new System.EventHandler(this.btnResetImage_Click);
+            // 
+            // btnBW
+            // 
+            this.btnBW.Location = new System.Drawing.Point(3, 61);
+            this.btnBW.Name = "btnBW";
+            this.btnBW.Size = new System.Drawing.Size(88, 23);
+            this.btnBW.TabIndex = 4;
+            this.btnBW.Text = "BW";
+            this.btnBW.UseVisualStyleBackColor = true;
+            this.btnBW.Click += new System.EventHandler(this.btnBW_Click);
             // 
             // MainForm
             // 
@@ -138,6 +150,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button btnToGrayScale;
         private System.Windows.Forms.Button btnResetImage;
+        private System.Windows.Forms.Button btnBW;
     }
 }
 

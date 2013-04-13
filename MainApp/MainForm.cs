@@ -38,6 +38,12 @@ namespace MainApp
             _targetImage = ByteImage.convertByteImageToBitmap(_targetByteImage);
             pbImage.Image = _targetImage;
         }
+        private void btnBW_Click(object sender, EventArgs e)
+        {
+            _targetByteImage = ToBlackAndWhite(_targetByteImage);
+            _targetImage = ByteImage.convertByteImageToBitmap(_targetByteImage);
+            pbImage.Image = _targetImage;
+        }
         #endregion
 
         #region Form Action
@@ -73,6 +79,8 @@ namespace MainApp
 
         public ByteImage ToGrayScale(ByteImage image)
         {
+            if (image == null)
+                return null;
             for (int x = 0; x < image.Width; x++)
             {
                 for (int y = 0; y < image.Height; y++)
@@ -84,6 +92,23 @@ namespace MainApp
             }
             return image;
         }
+        public ByteImage ToBlackAndWhite(ByteImage image)
+        {
+            if (image == null)
+                return null;
+            for (int x = 0; x < image.Width; x++)
+            {
+                for (int y = 0; y < image.Height; y++)
+                {
+                    image.byteImage[x, y].R = image.byteImage[x, y].G = image.byteImage[x, y].B =
+                        (byte)((0.2126 * image.getR(x, y) + 0.7152 * image.getG(x, y) + 0.0722 * image.getB(x, y)) > 127 ? 255 : 0);
+                    //(byte)((image.getR(x, y) + image.getG(x, y) + image.getB(x, y))/3);
+                }
+            }
+            return image;
+        }
         #endregion
+
+
     }
 }
