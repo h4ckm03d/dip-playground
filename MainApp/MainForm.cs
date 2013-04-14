@@ -43,6 +43,9 @@ namespace MainApp
             _targetByteImage = ToBlackAndWhite(_targetByteImage);
             _targetImage = ByteImage.convertByteImageToBitmap(_targetByteImage);
             pbImage.Image = _targetImage;
+            Diameter dm = GetDiameterHeight(_targetByteImage);
+            lblHeightDiameter.Text = dm.Height.ToString();
+            lblWidthDiameter.Text = dm.Width.ToString();
         }
         #endregion
 
@@ -57,6 +60,7 @@ namespace MainApp
             {
                 if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
+                    
                     _targetPath = ofd.FileName;
                     ReloadImage();
                 }
@@ -101,14 +105,98 @@ namespace MainApp
                 for (int y = 0; y < image.Height; y++)
                 {
                     image.byteImage[x, y].R = image.byteImage[x, y].G = image.byteImage[x, y].B =
-                        (byte)((0.2126 * image.getR(x, y) + 0.7152 * image.getG(x, y) + 0.0722 * image.getB(x, y)) > 127 ? 255 : 0);
+                        (byte)((0.2126 * image.getR(x, y) + 0.7152 * image.getG(x, y) + 0.0722 * image.getB(x, y)) > 234 ? 255 : 0);
                     //(byte)((image.getR(x, y) + image.getG(x, y) + image.getB(x, y))/3);
                 }
             }
             return image;
         }
-        #endregion
 
+        private Diameter GetDiameterHeight(ByteImage image)
+        {
+            int from=-1, to=-1;
+            int diameter = 0;
+            int position = 0;
+            int maxHeightDiameter = int.MinValue;
+            int maxWidthDiameter = int.MinValue;
+            for (int i = 0; i < image.Width; i++)
+            {
+                from = -1;
+                to = -1;
+                for (int j = 0; j < image.Height; j++)
+                {
+                    if (image.getB(i, j) == 0)
+                    {
+                        from = j;
+                        break;
+                    }
+                }
+                if (from != -1)
+                {
+                    for (int j = image.Height-1; j >0 ; j--)
+                    {
+                        if (image.getB(i, j) == 0)
+                        {
+                            to = j;
+                            break;
+                        }
+                    }
+                }
+                diameter = to - from;
+                if (diameter > maxHeightDiameter)
+                {
+                    position = i;
+                    maxHeightDiameter = diameter;
+                }
+            }
+
+            for (int i = 0; i < image.Height; i++)
+            {
+                image.byteImage[position, i].R = image.byteImage[position, i].G = image.byteImage[position, i].B = 0;
+            }
+
+            //width
+            for (int i = 0; i < image.Height; i++)
+            {
+                from = -1;
+                to = -1;
+                for (int j = 0; j < image.Width; j++)
+                {
+                    if (image.getB(j, i) == 0)
+                    {
+                        from = j;
+                        break;
+                    }
+                }
+                if (from != -1)
+                {
+                    for (int j = image.Width - 1; j > 0; j--)
+                    {
+                        if (image.getB(j, i) == 0)
+                        {
+                            to = j;
+                            break;
+                        }
+                    }
+                }
+                diameter = to - from;
+                if (diameter > maxWidthDiameter)
+                {
+                    position = i;
+                    maxWidthDiameter = diameter;
+                }
+            }
+
+            for (int i = 0; i < image.Width; i++)
+            {
+                image.byteImage[i, position].R = image.byteImage[i, position].G = image.byteImage[i, position].B = 0;
+            }
+
+            pictureBox1.Image = ByteImage.convertByteImageToBitmap(image);
+            return new Diameter(maxWidthDiameter,maxHeightDiameter);
+        }
+
+        #endregion
 
     }
 }
