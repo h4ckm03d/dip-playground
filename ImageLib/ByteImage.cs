@@ -17,30 +17,43 @@ namespace ImageLib
 
     public class ByteImage
     {
-        public ByteColor[,] byteImage;
+        public ByteColor[] byteImage;
+        public int[] PosY;
         public int Height;
         public int Width;
 
+        public ByteColor this[int x, int y]
+        {
+            get { return byteImage[x + PosY[y]]; }
+            set { byteImage[x + PosY[y]] = value; }
+        }
+        
         public ByteImage(int iWidth, int iHeight)
         {
             Width = iWidth;
             Height = iHeight;
-            byteImage = new ByteColor[Width, Height];
+            PosY = new int[Height];
+            PosY[0] = 0;
+            for (int x = 1; x < Height; x++)
+                PosY[x] = PosY[x - 1] + Width;
+            byteImage = new ByteColor[Width * Height];
         }
 
-        public byte getR(int x, int y)
+        public void SetAll(int x, int y, byte R, byte G, byte B)
         {
-            return byteImage[x, y].R;
+            int idx = x + PosY[y];
+            byteImage[idx].B = B;
+            byteImage[idx].G = G;
+            byteImage[idx].R = R;
         }
 
-        public byte getG(int x, int y)
+        public void SetByteColor(int x, int y, ByteColor value)
         {
-            return byteImage[x, y].G;
+            byteImage[x + PosY[y]] = value;
         }
-
-        public byte getB(int x, int y)
+        public ByteColor GetByteColor(int x, int y)
         {
-            return byteImage[x, y].B;
+            return byteImage[x + PosY[y]];
         }
 
         // Static method
@@ -57,14 +70,11 @@ namespace ImageLib
                 byte* pInputImage = (byte*)(void*)bdInputImage.Scan0;
                 // details explanation about stride image, http://www.codersource.net/csharp_image_Processing.aspx
                 int nOffset = bdInputImage.Stride - bdInputImage.Width * PixelSize;
-
                 for (int y = 0; y < bdInputImage.Height; y++)
                 {
                     for (int x = 0; x < bdInputImage.Width; x++)
                     {
-                        byImage.byteImage[x, y].R = pInputImage[2];
-                        byImage.byteImage[x, y].G = pInputImage[1];
-                        byImage.byteImage[x, y].B = pInputImage[0];
+                        byImage.SetAll(x, y, pInputImage[2], pInputImage[1], pInputImage[0]);
                         pInputImage += PixelSize;
                     }
                     pInputImage += nOffset;
@@ -85,14 +95,15 @@ namespace ImageLib
             {
                 byte* pImgSegmented = (byte*)(void*)bdImgSegment.Scan0;
                 int nOffset = bdImgSegment.Stride - bdImgSegment.Width * PixelSize;
-
+                int idx = 0;
                 for (int y = 0; y < bdImgSegment.Height; y++)
                 {
                     for (int x = 0; x < bdImgSegment.Width; x++)
                     {
-                        pImgSegmented[0] = byImage.getB(x, y);
-                        pImgSegmented[1] = byImage.getG(x, y);
-                        pImgSegmented[2] = byImage.getR(x, y);
+                        idx = x + y * byImage.Width;
+                        pImgSegmented[0] = byImage[x, y].B;
+                        pImgSegmented[1] = byImage[x, y].G;
+                        pImgSegmented[2] = byImage[x, y].R;
                         pImgSegmented += PixelSize;
                     }
                     pImgSegmented += nOffset;
@@ -110,7 +121,7 @@ namespace ImageLib
             {
                 for (int x = 0; x < result.Width; x++)
                 {
-                    result.byteImage[x, y] = input.byteImage[x, y];
+                    result[x, y]= input[x, y];
                 }
             }
             return result;
